@@ -3,7 +3,6 @@ package com.example.bookapplication.controllers;
 import com.example.bookapplication.entities.JwtResponse;
 import com.example.bookapplication.entities.User;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,24 +42,6 @@ public class UserController {
             model.addAttribute("message", "Signup Unsuccessful");
         }
         return "signup";
-    }
-
-    @GetMapping("/profile")
-    public String userProfilePage(HttpServletRequest request, Model model) {
-
-        String token = (String) request.getSession().getAttribute("authenticationToken");
-        token = "Bearer " + token;
-        RestTemplate template = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("authorization", token);
-        HttpEntity http = new HttpEntity(null, headers);
-        ResponseEntity<String> response = template.exchange("http://localhost:8080/auth", HttpMethod.GET, http, String.class);
-
-        if (response.getBody().toString().equals("success")) {
-//            model.addAttribute("user", response.getBody());
-            return "user-profile";
-        }
-        return "error";
     }
 
     @GetMapping("/logout")
