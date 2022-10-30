@@ -1,3 +1,13 @@
 
 server:
   port: 8081
+spring:
+  datasource:
+    username: root
+    url: jdbc:mysql://localhost:3306/book-client-app
+    driverClassName: com.mysql.cj.jdbc.Driver
+    password: ''
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update

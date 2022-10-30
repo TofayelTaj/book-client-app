@@ -2,6 +2,8 @@ package com.example.bookapplication.controllers;
 
 import com.example.bookapplication.entities.JwtResponse;
 import com.example.bookapplication.entities.User;
+import com.example.bookapplication.services.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class UserController {
 
+    @Autowired
+    private AuthService authService;
     @PostMapping("/login")
     public String login(@ModelAttribute User user, Model model, HttpServletRequest request) {
         RestTemplate restTemplate = new RestTemplate();
@@ -25,7 +29,7 @@ public class UserController {
         String authenticationToken = response.getBody().getJwtToken();
         if (!authenticationToken.isEmpty()) {
             request.getSession().setAttribute("authenticationToken", response.getBody().getJwtToken());
-            return "user-dashboard";
+            return "redirect:/dashboard";
         }
         model.addAttribute("message", response.getBody().getMessage());
         return "login";
@@ -44,6 +48,13 @@ public class UserController {
         return "signup";
     }
 
+    @GetMapping("/profile")
+    public String userProfilePage(HttpServletRequest request, Model model) {
+
+        User user = authService.getAuthenticatedUser(request);
+        model.addAttribute("user", user);
+        return "user-profile";
+    }
     @GetMapping("/logout")
     public String logout(Model model, HttpServletRequest request) {
         request.getSession().removeAttribute("authenticationToken");

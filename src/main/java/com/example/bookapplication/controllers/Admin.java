@@ -17,18 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/admin")
 public class Admin {
 
-    @GetMapping("/profile")
-    public String userProfilePage(HttpServletRequest request, Model model) {
-
-        String token = (String) request.getSession().getAttribute("authenticationToken");
-        token = "Bearer " + token;
-        RestTemplate template = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("authorization", token);
-        headers.add("requestPath", request.getContextPath());
-        HttpEntity http = new HttpEntity(null, headers);
-        ResponseEntity<User> user = template.exchange("http://localhost:8080/admin/user", HttpMethod.GET, new HttpEntity<>(headers), User.class);
-        model.addAttribute("user", user.getBody());
-        return "admin-profile";
-    }
+//    @GetMapping("/profile")
+//    public String userProfilePage(HttpServletRequest request, Model model) {
+//
+//        String token = (String) request.getSession().getAttribute("authenticationToken");
+//        token = "Bearer " + token;
+//        RestTemplate template = new RestTemplate();
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("authorization", token);
+//        headers.add("requestPath", request.getContextPath());
+//        HttpEntity http = new HttpEntity(null, headers);
+//        ResponseEntity<User> user = template.exchange("http://localhost:8080/admin/user", HttpMethod.GET, new HttpEntity<>(headers), User.class);
+//        model.addAttribute("user", user.getBody());
+//        return "admin-profile";
+//    }
 }
