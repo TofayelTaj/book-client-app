@@ -29,7 +29,7 @@ public class UserController {
 
         String authenticationToken = response.getBody().getJwtToken();
         if (!authenticationToken.isEmpty()) {
-            request.getSession().setAttribute("authenticationToken", authenticationToken);
+            request.getSession().setAttribute("authenticationToken", response.getBody().getJwtToken());
             return "redirect:/dashboard";
         }
         model.addAttribute("message", response.getBody().getMessage());
