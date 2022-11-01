@@ -24,12 +24,8 @@
     <div th:if="${user.role.toString().equalsIgnoreCase('admin')}">
         <a th:href="@{/add-book}" class="btn btn-outline-primary">Add Book</a>
         <a th:href="@{/author}" class="btn btn-outline-primary">Add New Author</a>
-
     </div>
-    <div th:if="${user.role.toString().equalsIgnoreCase('user')}">
 
-
-    </div>
 </div>
 
 
