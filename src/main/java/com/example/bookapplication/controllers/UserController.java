@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,11 +29,21 @@ public class UserController {
 
         String authenticationToken = response.getBody().getJwtToken();
         if (!authenticationToken.isEmpty()) {
-            request.getSession().setAttribute("authenticationToken", response.getBody().getJwtToken());
+            request.getSession().setAttribute("authenticationToken", authenticationToken);
             return "redirect:/dashboard";
         }
         model.addAttribute("message", response.getBody().getMessage());
         return "login";
+    }
+
+    @GetMapping("/oauthLogin")
+    public String oAuthLogin(HttpServletRequest request, @RequestParam("token") String token){
+        System.out.println("token : " + token);
+        if(token != null){
+            request.getSession().setAttribute("authenticationToken", token);
+            return "redirect:/dashboard";
+        }
+        return "error";
     }
 
     @PostMapping("/signup")

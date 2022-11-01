@@ -14,14 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthService {
 
 
-    public User getAuthenticatedUser(HttpServletRequest request){
+    public User getAuthenticatedUser(HttpServletRequest request) {
         String token = (String) request.getSession().getAttribute("authenticationToken");
-        String uri = request.getServletPath();
         token = "Bearer " + token;
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("authorization", token);
-        headers.add("requestPath", request.getContextPath());
         HttpEntity http = new HttpEntity(null, headers);
         ResponseEntity<User> user = template.exchange("http://localhost:8080/user", HttpMethod.GET, new HttpEntity<>(headers), User.class);
         return user.getBody();
