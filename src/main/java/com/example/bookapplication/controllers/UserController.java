@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -23,13 +26,22 @@ public class UserController {
     @Autowired
     private AuthService authService;
     @PostMapping("/login")
-    public String login(@ModelAttribute User user, Model model, HttpServletRequest request) {
+    public String login(@ModelAttribute User user, Model model, @RequestParam("rememberMe") Optional<String> rememberMe, HttpServletRequest request, HttpServletResponse servletResponse) {
+
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JwtResponse> response = restTemplate.exchange("http://localhost:8080/authenticate", HttpMethod.POST, new HttpEntity<>(user), JwtResponse.class);
 
         String authenticationToken = response.getBody().getJwtToken();
         if (!authenticationToken.isEmpty()) {
             request.getSession().setAttribute("authenticationToken", response.getBody().getJwtToken());
+            if(rememberMe.isPresent()) {
+                Cookie userNameCookie = new Cookie("username", user.getEmail());
+                Cookie passwordCookie = new Cookie("password", user.getPassword());
+                userNameCookie.setMaxAge(86400 * 3);
+                passwordCookie.setMaxAge(86400 * 3);
+                servletResponse.addCookie(userNameCookie);
+                servletResponse.addCookie(passwordCookie);
+            }
             return "redirect:/dashboard";
         }
         model.addAttribute("message", response.getBody().getMessage());
@@ -66,8 +78,11 @@ public class UserController {
         return "user-profile";
     }
     @GetMapping("/logout")
-    public String logout(Model model, HttpServletRequest request) {
+    public String logout(Model model, HttpServletRequest request, HttpServletResponse response) {
         request.getSession().removeAttribute("authenticationToken");
+        Cookie[] cookies = request.getCookies();
+        response.addCookie(new Cookie("username", ""));
+        response.addCookie(new Cookie("password", ""));
         model.addAttribute("logoutMsg", "logout success");
         return "index";
     }
